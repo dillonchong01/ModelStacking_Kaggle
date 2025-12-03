@@ -1,30 +1,26 @@
-# Kaggle Competition  -  Season 5 Episode 11 
+# Kaggle Competition – Season 5 Episode 11  
 **Predicting Loan Payback**
 
-Task: Binary classification → **predict the probability** that a loan will be paid back
-
+**Task:** Binary classification → predict the probability that a loan will be paid back  
 🔗 **Competition link**: https://www.kaggle.com/competitions/playground-series-s5e11/overview
 
 ---
 
 ## 🎯 Project Goal
 
-The personal goal for this competition was to experiment with **stacking techniques** using multiple models through a meta-learning approach.
-
-Instead of relying on a single model, this project focused on integrating multiple learners to improve predictive performance and model robustness.
+The goal of this project was to experiment with **stacking techniques** using multiple models in a meta-learning setup. Instead of relying on a single model, the focus was on **combining the strengths of different algorithms** to improve overall performance and robustness.
 
 ---
 
 ## 🧠 Models Used
 
 **Base (Level-0) models:**
-- **XGBoost** (Extreme Gradient Boosting)
-- **LightGBM** (Light Gradient Boosting Machine)
-- **CatBoost** (Categorical Boosting)
-- **Histogram Gradient Boosting (HGB)** from scikit-learn
+- XGBoost (Extreme Gradient Boosting)
+- LightGBM (Light Gradient Boosting Machine)
+- CatBoost (Categorical Boosting)
 
 **Meta (Level-1) model:**
-- **Logistic Regression**
+- Logistic Regression
 
 ---
 
@@ -37,20 +33,26 @@ Instead of relying on a single model, this project focused on integrating multip
    - Frequency encoding  
    - Quantile binning  
 
-3. Use **Optuna** to tune hyperparameters for each base (Level-0) model:
-   - XGBoost, LightGBM, CatBoost, HistogramGB
+3. Train each base (Level-0) model and generate **out-of-fold (OOF) predicted probabilities** on the training data
 
-4. Train the base models and generate **out-of-fold (OOF) predicted probabilities** on the training data
+4. Combine these predictions into a new dataset, where each column represents the prediction of one base model
 
-5. Combine these predictions into a new dataset, where each column comes from the prediciton of one base model:
+5. Train a **Logistic Regression meta (Level-1) model** using this stacked dataset and the original target labels  
+   - The meta-model learns how to best weight and combine the base models’ predictions
 
-
-6. Train a **Logistic Regression meta (Level-1) model** using this new dataset and the original target labels. The meta-model learns how to best combine the base models’ predictions
-
-7. Use the trained base models + meta-model together (on the full dataset) to produce the **final probability predictions** on the test set for submission
+6. Use the trained base models + meta-model to generate the **final probability predictions** on the test set for submission
 
 ---
 
-> In a more advanced setup, a wider variety of model types (e.g. neural networks, SVMs, etc.) could have been included to increase model diversity in the stack. However, this project was mainly aimed at understanding the fundamentals and mechanics of stacking, so I did not focus on incorporating diverse model types.
+## 📊 Model Performance (AUC)
+
+- **CatBoost**: 0.92041  
+- **LightGBM**: 0.92342  
+- **XGBoost**: 0.92466  
+- **Overall Meta Model (Stacked)**: **0.92518**
+
+The stacked model achieved the highest AUC, confirming that combining multiple models helped capture complementary patterns in the data.
 
 ---
+
+> In a more advanced setup, a wider variety of model types (e.g. neural networks, SVMs) could be included to increase diversity. However, this project was focused on understanding the fundamentals / mechanics of stacking, rather than getting the best possible evaluation metric.
